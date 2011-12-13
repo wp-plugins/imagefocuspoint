@@ -3,7 +3,7 @@
 Plugin Name: Image Focus Point
 Plugin URI: https://github.com/eoma/imageFocusPoint
 Description: Plugin for setting focus point in a picture, makes it easy to crop at a given point
-Version: 0.1
+Version: 0.1.2
 Author: Endre Oma
 Author URI: http://endreoma.org
 License: GPL2
@@ -297,9 +297,22 @@ function ifp_wp_crop_image( $src_file, $src_x, $src_y, $src_w, $src_h, $dst_w, $
 
 add_action('wp_generate_attachment_metadata', 'ifp_crop', 5, 2);
 
-if ( is_admin() ) {
+function ifp_javascript_variables() {
+?>
+
+<script type="text/javascript">
+	var ifp_base_url = "<?php echo plugin_dir_url( __FILE__ ) ?>";
+</script>
+
+<?php
+}
+
+function ifp_admin_init() {
 	add_action('attachment_fields_to_edit', 'ifp_attachment_fields_to_edit', 10, 2);
 	add_action('attachment_fields_to_save', 'ifp_attachment_fields_to_save', 10, 2);
+	add_action('admin_head', 'ifp_javascript_variables');
 	
 	wp_enqueue_script('image_focus_point', plugins_url('/imageFocusPoint.js', __FILE__), array('jquery'));
 }
+add_action('admin_init', 'ifp_admin_init');
+
